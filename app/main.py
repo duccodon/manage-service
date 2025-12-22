@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from contextlib import asynccontextmanager
 from app.db import database
-from app.routes import location_router, notification_router
+from app.routes import location_router, notification_router, weather_router
 from app.logger.logger import logger
 from app.schemas.base import AppBaseResponseError
 import uvicorn
@@ -108,6 +108,9 @@ def init_routes(app: FastAPI):
     )
     app.include_router(
         location_router.router, prefix=BASE_URL, tags=["Location API"]
+    )
+    app.include_router(
+        weather_router.router, prefix=BASE_URL, tags=["Weather API"]
     )
 
 
