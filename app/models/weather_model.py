@@ -70,11 +70,95 @@ WEATHER_TYPE_MAPPING = {
     "TYPE_UNSPECIFIED": SimplifiedWeatherType.CLOUDY,
 }
 
+# WeatherAPI.com condition code mapping (code to simplified type)
+WEATHERAPI_CODE_MAPPING = {
+    # Sunny/Clear - Code 1000
+    1000: SimplifiedWeatherType.SUNNY,
+    
+    # Partly cloudy - Code 1003
+    1003: SimplifiedWeatherType.PARTLY_CLOUDY,
+    
+    # Cloudy - Codes 1006, 1009
+    1006: SimplifiedWeatherType.CLOUDY,
+    1009: SimplifiedWeatherType.CLOUDY,  # Overcast
+    
+    # Cloudy (Mist/Fog treated as cloudy)
+    1030: SimplifiedWeatherType.CLOUDY,  # Mist
+    1135: SimplifiedWeatherType.CLOUDY,  # Fog
+    1147: SimplifiedWeatherType.CLOUDY,  # Freezing fog
+    
+    # Light rain - Codes 1063, 1150, 1153, 1168, 1180, 1183, 1198, 1240
+    1063: SimplifiedWeatherType.LIGHT_RAIN,  # Patchy rain possible
+    1150: SimplifiedWeatherType.LIGHT_RAIN,  # Patchy light drizzle
+    1153: SimplifiedWeatherType.LIGHT_RAIN,  # Light drizzle
+    1168: SimplifiedWeatherType.LIGHT_RAIN,  # Freezing drizzle
+    1180: SimplifiedWeatherType.LIGHT_RAIN,  # Patchy light rain
+    1183: SimplifiedWeatherType.LIGHT_RAIN,  # Light rain
+    1198: SimplifiedWeatherType.LIGHT_RAIN,  # Light freezing rain
+    1240: SimplifiedWeatherType.LIGHT_RAIN,  # Light rain shower
+    
+    # Heavy rain - Codes 1186, 1189, 1192, 1195, 1201, 1243, 1246
+    1186: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate rain at times
+    1189: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate rain
+    1192: SimplifiedWeatherType.HEAVY_RAIN,  # Heavy rain at times
+    1195: SimplifiedWeatherType.HEAVY_RAIN,  # Heavy rain
+    1201: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy freezing rain
+    1243: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy rain shower
+    1246: SimplifiedWeatherType.HEAVY_RAIN,  # Torrential rain shower
+    
+    # Thunderstorms -> Heavy rain - Codes 1087, 1273, 1276
+    1087: SimplifiedWeatherType.HEAVY_RAIN,  # Thundery outbreaks possible
+    1273: SimplifiedWeatherType.HEAVY_RAIN,  # Patchy light rain with thunder
+    1276: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy rain with thunder
+    
+    # Snow -> Light rain for light snow, Heavy rain for heavy snow
+    1066: SimplifiedWeatherType.LIGHT_RAIN,  # Patchy snow possible
+    1210: SimplifiedWeatherType.LIGHT_RAIN,  # Patchy light snow
+    1213: SimplifiedWeatherType.LIGHT_RAIN,  # Light snow
+    1255: SimplifiedWeatherType.LIGHT_RAIN,  # Light snow showers
+    1216: SimplifiedWeatherType.HEAVY_RAIN,  # Patchy moderate snow
+    1219: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate snow
+    1222: SimplifiedWeatherType.HEAVY_RAIN,  # Patchy heavy snow
+    1225: SimplifiedWeatherType.HEAVY_RAIN,  # Heavy snow
+    1258: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy snow showers
+    1114: SimplifiedWeatherType.HEAVY_RAIN,  # Blowing snow
+    1117: SimplifiedWeatherType.HEAVY_RAIN,  # Blizzard
+    1279: SimplifiedWeatherType.HEAVY_RAIN,  # Patchy light snow with thunder
+    1282: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy snow with thunder
+    
+    # Sleet -> Heavy rain
+    1069: SimplifiedWeatherType.HEAVY_RAIN,  # Patchy sleet possible
+    1072: SimplifiedWeatherType.LIGHT_RAIN,  # Patchy freezing drizzle possible
+    1204: SimplifiedWeatherType.HEAVY_RAIN,  # Light sleet
+    1207: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy sleet
+    1249: SimplifiedWeatherType.HEAVY_RAIN,  # Light sleet showers
+    1252: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy sleet showers
+    
+    # Ice pellets -> Heavy rain
+    1237: SimplifiedWeatherType.HEAVY_RAIN,  # Ice pellets
+    1261: SimplifiedWeatherType.HEAVY_RAIN,  # Light showers of ice pellets
+    1264: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy showers of ice pellets
+}
+
 
 class WeatherResponse(BaseModel):
     """Simplified weather response"""
     weather_type: str  # One of: sunny, partly cloudy, cloudy, light rain, heavy rain
     group_id: str
+
+
+class HourlyWeather(BaseModel):
+    """Hourly weather data"""
+    time: str  # Format: "2025-12-22 14:00"
+    weather_type: str  # One of: sunny, partly cloudy, cloudy, light rain, heavy rain
+    temp_c: float  
+
+
+class WeatherHourlyResponse(BaseModel):
+    """24-hour weather forecast response"""
+    group_id: str
+    forecast_date: str  # Format: "2025-12-22"
+    hourly: list[HourlyWeather]  
 
 
 class WeatherByGroupIdReq(BaseModel):

@@ -20,3 +20,41 @@ async def get_weather_by_group_id(data: WeatherByGroupIdReq) -> Optional[Weather
     weather = await weather_repo.get_weather_by_group_id(data.group_id)
     
     return weather
+
+
+async def get_weather_by_group_id_weatherapi(data: WeatherByGroupIdReq) -> Optional[WeatherResponse]:
+    """
+    Get weather information for a location identified by group_id using WeatherAPI.com
+    
+    Args:
+        data: Request containing group_id
+        
+    Returns:
+        WeatherResponse with current weather conditions
+        
+    Raises:
+        Exception: If location not found or weather API fails
+    """
+    # Fetch weather data using group_id from WeatherAPI.com
+    weather = await weather_repo.get_weather_by_group_id_weatherapi(data.group_id)
+    
+    return weather
+
+
+async def get_weather_hourly_by_group_id(data: WeatherByGroupIdReq):
+    """
+    Get 24-hour weather forecast for a location identified by group_id using WeatherAPI.com
+    
+    Args:
+        data: Request containing group_id
+        
+    Returns:
+        WeatherHourlyResponse with 24 hours of weather conditions
+        
+    Raises:
+        Exception: If location not found or weather API fails
+    """
+    # Fetch 24-hour weather forecast using group_id from WeatherAPI.com
+    weather = await weather_repo.get_weather_hourly_by_group_id(data.group_id)
+    
+    return weather
