@@ -195,7 +195,6 @@ async def get_weather_hourly_by_group_id(group_id: str):
             forecast_date = today.get("date")
             hour_data = today.get("hour", [])
             
-            # Import the mapping
             from app.models.weather_model import WEATHERAPI_CODE_MAPPING, HourlyWeather, WeatherHourlyResponse
             
             # Process hourly data
@@ -205,6 +204,10 @@ async def get_weather_hourly_by_group_id(group_id: str):
                 temp_c = hour.get("temp_c", 0.0)
                 condition = hour.get("condition", {})
                 weather_code = condition.get("code", 1006)
+                chance_of_rain = hour.get("chance_of_rain", 0)  
+                
+                if hour_data.index(hour) == 0:
+                    logger.info(f"Sample hour data - chance_of_rain: {chance_of_rain}, condition: {condition.get('text')}")
                 
                 # Map to simplified weather type
                 simplified_type = WEATHERAPI_CODE_MAPPING.get(
@@ -215,6 +218,7 @@ async def get_weather_hourly_by_group_id(group_id: str):
                     time=time,
                     weather_type=simplified_type.value,
                     temp_c=temp_c,
+                    chance_of_rain=chance_of_rain,
                 ))
             
             logger.info(f"Processed {len(hourly_weather)} hours of weather data")

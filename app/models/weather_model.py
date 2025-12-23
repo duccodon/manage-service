@@ -151,7 +151,8 @@ class HourlyWeather(BaseModel):
     """Hourly weather data"""
     time: str  # Format: "2025-12-22 14:00"
     weather_type: str  # One of: sunny, partly cloudy, cloudy, light rain, heavy rain
-    temp_c: float  
+    temp_c: float
+    chance_of_rain: int = 0
 
 
 class WeatherHourlyResponse(BaseModel):
