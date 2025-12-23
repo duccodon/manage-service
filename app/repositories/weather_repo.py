@@ -9,7 +9,8 @@ from app.models.weather_model import (
 from app.repositories import location_repo
 from app.logger.logger import logger
 
-
+#open weather api, limit free tier
+#gg do not support vietnam 
 async def get_weather_by_group_id(group_id: str) -> Optional[WeatherResponse]:
     """
     Get current weather conditions from Google Weather API and return simplified weather type
@@ -76,6 +77,7 @@ async def get_weather_by_group_id(group_id: str) -> Optional[WeatherResponse]:
         raise Exception(f"Failed to fetch weather data: {str(e)}")
 
 
+# coverage area: 1-11km, 1 million free calls per month
 async def get_weather_by_group_id_weatherapi(group_id: str) -> Optional[WeatherResponse]:
     """
     Get current weather conditions from WeatherAPI.com and return simplified weather type
