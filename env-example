@@ -16,3 +16,12 @@ NOTIFICATION_COLLECTION="notification"
 
 # Google Maps API Key
 GOOGLE_MAPS_API_KEY="your_google_maps_api_key_here"
+
+# WeatherAPI.com API Key
+WEATHER_API_KEY="your_weatherapi_key_here"
+
+# OpenWeather API Key
+OPENWEATHER_API_KEY="your_openweather_api_key_here"
+
+# Visual Crossing API Key
+VISUAL_CROSSING_API_KEY="your_visualcrossing_api_key_here"

@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -140,6 +141,87 @@ WEATHERAPI_CODE_MAPPING = {
     1264: SimplifiedWeatherType.HEAVY_RAIN,  # Moderate or heavy showers of ice pellets
 }
 
+# OpenWeather condition code mapping (main weather condition to simplified type)
+OPENWEATHER_CONDITION_MAPPING = {
+    # Clear - id 800
+    "Clear": SimplifiedWeatherType.SUNNY,
+    
+    # Clouds - ids 801-804
+    "Clouds": SimplifiedWeatherType.CLOUDY,  # Default for all cloud types
+    
+    # Drizzle - ids 300-321 (light rain)
+    "Drizzle": SimplifiedWeatherType.LIGHT_RAIN,
+    
+    # Rain - ids 500-531
+    "Rain": SimplifiedWeatherType.HEAVY_RAIN,  # Default for rain
+    
+    # Thunderstorm - ids 200-232
+    "Thunderstorm": SimplifiedWeatherType.HEAVY_RAIN,
+    
+    # Snow - ids 600-622
+    "Snow": SimplifiedWeatherType.HEAVY_RAIN,
+    
+    # Atmosphere (mist, fog, etc) - ids 701-781
+    "Mist": SimplifiedWeatherType.CLOUDY,
+    "Smoke": SimplifiedWeatherType.CLOUDY,
+    "Haze": SimplifiedWeatherType.CLOUDY,
+    "Dust": SimplifiedWeatherType.CLOUDY,
+    "Fog": SimplifiedWeatherType.CLOUDY,
+    "Sand": SimplifiedWeatherType.CLOUDY,
+    "Ash": SimplifiedWeatherType.CLOUDY,
+    "Squall": SimplifiedWeatherType.HEAVY_RAIN,
+    "Tornado": SimplifiedWeatherType.HEAVY_RAIN,
+}
+
+# OpenWeather detailed ID mapping for more accurate classification
+OPENWEATHER_ID_MAPPING = {
+    # Clear
+    800: SimplifiedWeatherType.SUNNY,
+    
+    # Clouds
+    801: SimplifiedWeatherType.PARTLY_CLOUDY,  # Few clouds: 11-25%
+    802: SimplifiedWeatherType.PARTLY_CLOUDY,  # Scattered clouds: 25-50%
+    803: SimplifiedWeatherType.CLOUDY,  # Broken clouds: 51-84%
+    804: SimplifiedWeatherType.CLOUDY,  # Overcast clouds: 85-100%
+    
+    # Light rain (500-504, 520)
+    500: SimplifiedWeatherType.LIGHT_RAIN,  # Light rain
+    501: SimplifiedWeatherType.LIGHT_RAIN,  # Moderate rain
+    520: SimplifiedWeatherType.LIGHT_RAIN,  # Light intensity shower rain
+}
+
+# Visual Crossing icon mapping to simplified type
+VISUAL_CROSSING_ICON_MAPPING = {
+    # Clear/Sunny
+    "clear-day": SimplifiedWeatherType.SUNNY,
+    "clear-night": SimplifiedWeatherType.SUNNY,
+    
+    # Partly cloudy
+    "partly-cloudy-day": SimplifiedWeatherType.PARTLY_CLOUDY,
+    "partly-cloudy-night": SimplifiedWeatherType.PARTLY_CLOUDY,
+    
+    # Cloudy
+    "cloudy": SimplifiedWeatherType.CLOUDY,
+    "wind": SimplifiedWeatherType.CLOUDY,
+    "fog": SimplifiedWeatherType.CLOUDY,
+    
+    # Light rain
+    "showers-day": SimplifiedWeatherType.LIGHT_RAIN,
+    "showers-night": SimplifiedWeatherType.LIGHT_RAIN,
+    
+    # Heavy rain
+    "rain": SimplifiedWeatherType.HEAVY_RAIN,
+    "thunder-rain": SimplifiedWeatherType.HEAVY_RAIN,
+    "thunder-showers-day": SimplifiedWeatherType.HEAVY_RAIN,
+    "thunder-showers-night": SimplifiedWeatherType.HEAVY_RAIN,
+    
+    # Snow -> Heavy rain
+    "snow": SimplifiedWeatherType.HEAVY_RAIN,
+    "snow-showers-day": SimplifiedWeatherType.HEAVY_RAIN,
+    "snow-showers-night": SimplifiedWeatherType.HEAVY_RAIN,
+    "hail": SimplifiedWeatherType.HEAVY_RAIN,
+}
+
 
 class WeatherResponse(BaseModel):
     """Simplified weather response"""
@@ -152,7 +234,7 @@ class HourlyWeather(BaseModel):
     time: str  # Format: "2025-12-22 14:00"
     weather_type: str  # One of: sunny, partly cloudy, cloudy, light rain, heavy rain
     temp_c: float
-    chance_of_rain: int = 0
+    chance_of_rain: float = 0.0 
 
 
 class WeatherHourlyResponse(BaseModel):
@@ -165,3 +247,9 @@ class WeatherHourlyResponse(BaseModel):
 class WeatherByGroupIdReq(BaseModel):
     """Request model for getting weather by group_id"""
     group_id: str
+
+
+class WeatherHistoricalReq(BaseModel):
+    """Request model for getting historical weather by group_id and date"""
+    group_id: str
+    date: Optional[str] = None  # Format: YYYY-MM-DD (e.g., "2025-12-24"). If None, uses current date
