@@ -186,7 +186,7 @@ async def get_weather_hourly_by_group_id_openweather(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_by_group_id_visualcrossing(
-    data: WeatherHistoricalReq,
+    data: WeatherByGroupIdReq,
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """

@@ -112,14 +112,8 @@ async def get_weather_by_group_id_visualcrossing(data) -> Optional[WeatherRespon
     Raises:
         Exception: If location not found or weather API fails
     """
-    # Import here to avoid circular imports
-    from app.models.weather_model import WeatherHistoricalReq
-    
-    # Extract date if present (supports both WeatherByGroupIdReq and WeatherHistoricalReq)
-    date = getattr(data, 'date', None)
-    
     # Fetch weather data using group_id from Visual Crossing API
-    weather = await weather_repo.get_weather_by_group_id_visualcrossing(data.group_id, date)
+    weather = await weather_repo.get_weather_by_group_id_visualcrossing(data.group_id)
     
     return weather
 

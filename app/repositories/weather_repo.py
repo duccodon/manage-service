@@ -432,7 +432,7 @@ async def get_weather_hourly_by_group_id_openweather(group_id: str):
 
 
 # Visual Crossing API - Free tier: 1,000 records/day, works best
-async def get_weather_by_group_id_visualcrossing(group_id: str, date: str = None) -> Optional[WeatherResponse]:
+async def get_weather_by_group_id_visualcrossing(group_id: str) -> Optional[WeatherResponse]:
     """
     Get weather conditions from Visual Crossing API for a specific date and return simplified weather type
     
@@ -459,12 +459,8 @@ async def get_weather_by_group_id_visualcrossing(group_id: str, date: str = None
     location_str = f"{lat},{long}"
     
     # Build URL with optional date for historical data
-    if date:
-        url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{location_str}/{date}"
-        include_param = "days"  # For historical/specific date
-    else:
-        url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{location_str}"
-        include_param = "current"  # For current weather
+    url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{location_str}"
+    include_param = "current"  # For current weather
     
     params = {
         "key": config.VISUAL_CROSSING_API_KEY,
@@ -479,22 +475,13 @@ async def get_weather_by_group_id_visualcrossing(group_id: str, date: str = None
             response.raise_for_status()
             
             data = response.json()
-            logger.info(f"Visual Crossing API response for group_id={group_id}, date={date or 'current'}")
+            logger.info(f"Visual Crossing API response for group_id={group_id} current")
             
-            # Get weather conditions (current or from specific date)
-            if date:
-                # Historical/specific date - get from days array
-                days = data.get("days", [])
-                if not days:
-                    raise Exception(f"No weather data available for date: {date}")
-                day_data = days[0]
-                icon = day_data.get("icon", "cloudy")
-            else:
-                # Current weather
-                current_conditions = data.get("currentConditions", {})
-                if not current_conditions:
-                    raise Exception("No current conditions in response")
-                icon = current_conditions.get("icon", "cloudy")
+            # Get weather conditions (current)
+            current_conditions = data.get("currentConditions", {})
+            if not current_conditions:
+                raise Exception("No current conditions in response")
+            icon = current_conditions.get("icon", "cloudy")
             
             from app.models.weather_model import VISUAL_CROSSING_ICON_MAPPING
             
