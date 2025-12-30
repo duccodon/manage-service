@@ -12,7 +12,7 @@ BASE_URL = "/weather"
 router = APIRouter(prefix=BASE_URL)
 
 
-@router.post(
+@router.get(
     "/by-group",
     summary="Get weather by group ID",
     description="Get simplified weather type for a location using its group_id. The group_id is used to retrieve the stored latitude and longitude from the database, which are then used to fetch weather data from Google Weather API and map it to simplified weather types.",
@@ -20,7 +20,7 @@ router = APIRouter(prefix=BASE_URL)
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_by_group_id(
-    data: WeatherByGroupIdReq,
+    data: WeatherByGroupIdReq = Depends(),
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
@@ -44,7 +44,7 @@ async def get_weather_by_group_id(
     return AppBaseResponse(weather).to_dict()
 
 
-@router.post(
+@router.get(
     "/by-group-weatherapi",
     summary="Get weather by group ID using WeatherAPI.com",
     description="Get simplified weather type for a location using its group_id from WeatherAPI.com. This endpoint supports Vietnam and global locations with 1 million free API calls per month. The group_id is used to retrieve the stored latitude and longitude from the database, which are then used to fetch weather data from WeatherAPI.com and map it to simplified weather types.",
@@ -52,13 +52,13 @@ async def get_weather_by_group_id(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_by_group_id_weatherapi(
-    data: WeatherByGroupIdReq,
+    data: WeatherByGroupIdReq = Depends(),
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
     Get simplified weather type for a location by group_id using WeatherAPI.com.
     
-    Request Body Parameters:
+    Query Parameters:
         - group_id: The unique identifier for the group/store location
     
     Returns simplified weather information:
@@ -81,7 +81,7 @@ async def get_weather_by_group_id_weatherapi(
     return AppBaseResponse(weather).to_dict()
 
 
-@router.post(
+@router.get(
     "/hourly-by-group-weatherapi",
     summary="Get 24-hour weather forecast by group ID",
     description="Get 24-hour weather forecast for a location using its group_id from WeatherAPI.com. Returns hourly weather conditions for the current day with simplified weather types and temperature.",
@@ -89,13 +89,13 @@ async def get_weather_by_group_id_weatherapi(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_hourly_by_group_id_weatherapi(
-    data: WeatherByGroupIdReq,
+    data: WeatherByGroupIdReq = Depends(),
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
     Get 24-hour weather forecast for a location by group_id using WeatherAPI.com.
     
-    Request Body Parameters:
+    Query Parameters:
         - group_id: The unique identifier for the group/store location
     
     Returns 24-hour weather forecast:
@@ -110,7 +110,7 @@ async def get_weather_hourly_by_group_id_weatherapi(
     return AppBaseResponse(weather).to_dict()
 
 
-@router.post(
+@router.get(
     "/by-group-openweather",
     summary="Get weather by group ID using OpenWeather API",
     description="Get simplified weather type for a location using its group_id from OpenWeather API. This endpoint provides global coverage with 1,000 free API calls per day. The group_id is used to retrieve the stored latitude and longitude from the database, which are then used to fetch weather data from OpenWeather API and map it to simplified weather types.",
@@ -118,13 +118,13 @@ async def get_weather_hourly_by_group_id_weatherapi(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_by_group_id_openweather(
-    data: WeatherByGroupIdReq,
+    data: WeatherByGroupIdReq = Depends(),
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
     Get simplified weather type for a location by group_id using OpenWeather API.
     
-    Request Body Parameters:
+    Query Parameters:
         - group_id: The unique identifier for the group/store location
     
     Returns simplified weather information:
@@ -148,7 +148,7 @@ async def get_weather_by_group_id_openweather(
     return AppBaseResponse(weather).to_dict()
 
 
-@router.post(
+@router.get(
     "/hourly-by-group-openweather",
     summary="Get 24-hour weather forecast by group ID using OpenWeather API",
     description="Get 24-hour weather forecast for a location using its group_id from OpenWeather API. Returns forecast data in 3-hour intervals for the next 24 hours with simplified weather types and temperature.",
@@ -156,13 +156,13 @@ async def get_weather_by_group_id_openweather(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_hourly_by_group_id_openweather(
-    data: WeatherByGroupIdReq,
+    data: WeatherByGroupIdReq = Depends(),
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
     Get 24-hour weather forecast for a location by group_id using OpenWeather API.
     
-    Request Body Parameters:
+    Query Parameters:
         - group_id: The unique identifier for the group/store location
     
     Returns 24-hour weather forecast (8 x 3-hour intervals):
@@ -178,7 +178,7 @@ async def get_weather_hourly_by_group_id_openweather(
     return AppBaseResponse(weather).to_dict()
 
 
-@router.post(
+@router.get(
     "/by-group-visualcrossing",
     summary="Get weather by group ID using Visual Crossing API (Current or Historical)",
     description="Get simplified weather type for a location using its group_id from Visual Crossing API. Supports both current weather and historical data. This endpoint provides global coverage with 1,000 free records per day. The group_id is used to retrieve the stored latitude and longitude from the database, which are then used to fetch weather data from Visual Crossing API and map it to simplified weather types.",
@@ -186,18 +186,15 @@ async def get_weather_hourly_by_group_id_openweather(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_by_group_id_visualcrossing(
-    data: WeatherByGroupIdReq,
+    data: WeatherByGroupIdReq = Depends(),
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
     Get simplified weather type for a location by group_id using Visual Crossing API.
     Supports both current weather and historical data.
     
-    Request Body Parameters:
+    Query Parameters:
         - group_id: The unique identifier for the group/store location
-        - date: (Optional) Date in YYYY-MM-DD format (e.g., "2025-12-24")
-                If not provided, returns current weather
-                If provided, returns weather for that specific date (historical data)
     
     Returns simplified weather information:
         - weather_type: One of 5 types
@@ -220,27 +217,14 @@ async def get_weather_by_group_id_visualcrossing(
     Frontend Usage (React/TypeScript):
         ```typescript
         // Current weather
-        const currentWeather = await fetch('/api/v1/weather/by-group-visualcrossing', {
-            method: 'POST',
-            body: JSON.stringify({ group_id: 'store-123' })
-        });
-        
-        // Historical weather (using Date object)
-        const date = new Date('2025-12-20');
-        const historicalWeather = await fetch('/api/v1/weather/by-group-visualcrossing', {
-            method: 'POST',
-            body: JSON.stringify({ 
-                group_id: 'store-123',
-                date: date.toISOString().split('T')[0] // "2025-12-20"
-            })
-        });
+        const currentWeather = await fetch('/api/v1/weather/by-group-visualcrossing?group_id=store-123');
         ```
     """
     weather = await weather_service.get_weather_by_group_id_visualcrossing(data)
     return AppBaseResponse(weather).to_dict()
 
 
-@router.post(
+@router.get(
     "/hourly-by-group-visualcrossing",
     summary="Get 24-hour weather data by group ID using Visual Crossing API (Current or Historical)",
     description="Get 24-hour weather data for a location using its group_id from Visual Crossing API. Supports both today's forecast and historical hourly data. Returns hourly weather data for the specified day with simplified weather types and temperature.",
@@ -248,14 +232,14 @@ async def get_weather_by_group_id_visualcrossing(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_hourly_by_group_id_visualcrossing(
-    data: WeatherHistoricalReq,
+    data: WeatherHistoricalReq = Depends(),
     #user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
     Get 24-hour weather data for a location by group_id using Visual Crossing API.
     Supports both today's forecast and historical hourly data.
     
-    Request Body Parameters:
+    Query Parameters:
         - group_id: The unique identifier for the group/store location
         - date: (Optional) Date in YYYY-MM-DD format (e.g., "2025-12-24")
                 If not provided, returns today's hourly forecast
@@ -273,19 +257,10 @@ async def get_weather_hourly_by_group_id_visualcrossing(
     Frontend Usage (React/TypeScript):
         ```typescript
         // Today's hourly forecast
-        const todayForecast = await fetch('/api/v1/weather/hourly-by-group-visualcrossing', {
-            method: 'POST',
-            body: JSON.stringify({ group_id: 'store-123' })
-        });
+        const todayForecast = await fetch('/api/v1/weather/hourly-by-group-visualcrossing?group_id=store-123');
         
         // Historical hourly data
-        const historicalData = await fetch('/api/v1/weather/hourly-by-group-visualcrossing', {
-            method: 'POST',
-            body: JSON.stringify({ 
-                group_id: 'store-123',
-                date: '2025-12-20'
-            })
-        });
+        const historicalData = await fetch('/api/v1/weather/hourly-by-group-visualcrossing?group_id=store-123&date=2025-12-20');
         ```
     """
     weather = await weather_service.get_weather_hourly_by_group_id_visualcrossing(data)
