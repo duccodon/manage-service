@@ -263,5 +263,24 @@ async def get_weather_hourly_by_group_id_visualcrossing(
         const historicalData = await fetch('/api/v1/weather/hourly-by-group-visualcrossing?group_id=store-123&date=2025-12-20');
         ```
     """
+    from fastapi import Response
+    from pydantic import BaseModel
+    import json
+
     weather = await weather_service.get_weather_hourly_by_group_id_visualcrossing(data)
-    return AppBaseResponse(weather).to_dict()
+    
+    def to_dict(obj):
+        if isinstance(obj, BaseModel):
+            return obj.model_dump()
+        if isinstance(obj, list):
+            return [to_dict(i) for i in obj]
+        if isinstance(obj, dict):
+            return {k: to_dict(v) for k, v in obj.items()}
+        return obj
+    
+    response_data = AppBaseResponse(to_dict(weather)).to_dict()
+    return Response(
+        content=json.dumps(response_data),
+        media_type="application/json",
+        headers={"Cache-Control": "public, max-age=3600"} # Cache for 1 hour
+    )
