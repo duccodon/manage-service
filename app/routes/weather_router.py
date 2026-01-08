@@ -3,10 +3,11 @@ from app.auth.auth import AuthUser, RoleChecker
 from app.schemas.base import AppBaseResponse
 from app.services import weather_service
 from app.models.weather_model import WeatherByGroupIdReq, WeatherHistoricalReq
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Response
 
+from pydantic import BaseModel
+import json
 
-router = APIRouter()
 
 BASE_URL = "/weather"
 router = APIRouter(prefix=BASE_URL)
@@ -232,8 +233,8 @@ async def get_weather_by_group_id_visualcrossing(
     status_code=status.HTTP_200_OK,
 )
 async def get_weather_hourly_by_group_id_visualcrossing(
-    data: WeatherHistoricalReq = Depends(),
-    #user: Annotated[AuthUser, Depends(RoleChecker())],
+    data: Annotated[WeatherHistoricalReq, Depends()],
+    user: Annotated[AuthUser, Depends(RoleChecker())],
 ):
     """
     Get 24-hour weather data for a location by group_id using Visual Crossing API.
@@ -263,9 +264,6 @@ async def get_weather_hourly_by_group_id_visualcrossing(
         const historicalData = await fetch('/api/v1/weather/hourly-by-group-visualcrossing?group_id=store-123&date=2025-12-20');
         ```
     """
-    from fastapi import Response
-    from pydantic import BaseModel
-    import json
 
     weather = await weather_service.get_weather_hourly_by_group_id_visualcrossing(data)
     

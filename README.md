@@ -10,7 +10,7 @@ source env/bin/activate
 pip3 install -r requirements.txt
 
 **Start app**
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000  # Allow external devices to access
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000  
 
 **Automatically create file 'requirements.txt'**
 pip freeze > requirements.txt
